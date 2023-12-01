@@ -1,3 +1,5 @@
+import { TPokemonListItem } from "./PokemonList";
+
 type TPokemonDetail = {
   name: string;
   url: string;
@@ -24,7 +26,7 @@ const fetchPokemonDetail = async (id: number) => {
   return data;
 };
 
-const PokemonDetail = async ({ id }: { id: number }) => {
+const PokemonDetail = async ({ id }: TPokemonListItem) => {
   const pokemonDetail = await fetchPokemonDetail(id);
 
   return (

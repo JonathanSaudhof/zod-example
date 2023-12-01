@@ -45,7 +45,7 @@ const PokemonList = async () => {
             key={pokemon.id}
             fallback={<PokemonDetailSkeleton name={pokemon.name} />}
           >
-            <PokemonDetail id={pokemon.id} />
+            <PokemonDetail {...pokemon} />
           </Suspense>
         ))}
     </div>
