@@ -1,14 +1,27 @@
 import { Suspense } from "react";
+import { z } from "zod";
 import PokemonDetail, { PokemonDetailSkeleton } from "./PokemonDetail";
 
-export type TPokemonResult = {
-  name: string;
-  url: string;
-};
+const PokemonResultItemSchema = z.object({ name: z.string(), url: z.string() });
 
-export type TPokemonListItem = {
-  id: number;
-} & TPokemonResult;
+const PokemonResultSchema = z.array(PokemonResultItemSchema);
+
+// export type TPokemonResult = {
+//   name: string;
+//   url: string;
+// };
+
+type TPokemonResult = z.infer<typeof PokemonResultItemSchema>;
+
+const PokemonResultListSchema = z.array(
+  PokemonResultItemSchema.extend({ id: z.number() }),
+);
+
+// export type TPokemonListItem = {
+//   id: number;
+// } & TPokemonResult;
+
+type TPokemonList = z.infer<typeof PokemonResultListSchema>;
 
 const getPokemonId = (url: string | string[]): number => {
   const spittedUrl = Array.isArray(url) ? url : url.split("/");
@@ -18,7 +31,7 @@ const getPokemonId = (url: string | string[]): number => {
   return parsedId || getPokemonId(spittedUrl);
 };
 
-const fetchPokemonList = async (): Promise<TPokemonListItem[]> => {
+const fetchPokemonList = async (): Promise<TPokemonList> => {
   const response = await fetch("https://pokeapi.co/api/v2/pokemon");
   const data = (await response.json()) as { results: TPokemonResult[] };
 
