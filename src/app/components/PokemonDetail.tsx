@@ -2,50 +2,36 @@ import { TPokemonListItem } from "./PokemonList";
 
 import { z } from "zod";
 
-const PokemonDetailSchema = z.object({
-  name: z.string(),
-  url: z.string(),
-  weight: z.number().positive(),
-  abilities: z.array(
-    z.object({
-      ability: z.object({
-        name: z.string(),
-        url: z.string(),
+const PokemonDetailSchema = z.promise(
+  z.object({
+    name: z.string(),
+    url: z.string(),
+    weight: z.number().positive(),
+    abilities: z.array(
+      z.object({
+        ability: z.object({
+          name: z.string(),
+          url: z.string(),
+        }),
+        is_hidden: z.boolean(),
+        slot: z.number(),
       }),
-      is_hidden: z.boolean(),
-      slot: z.number(),
+    ),
+    sprites: z.object({
+      front_default: z.string(),
+      back_default: z.string(),
     }),
-  ),
-  sprites: z.object({
-    front_default: z.string(),
-    back_default: z.string(),
   }),
-});
-
-// type TPokemonDetail = {
-//   name: string;
-//   url: string;
-//   weight: number;
-//   abilities: {
-//     ability: {
-//       name: string;
-//       url: string;
-//     };
-//     is_hidden: boolean;
-//     slot: number;
-//   }[];
-//   sprites: {
-//     front_default: string;
-//     back_default: string;
-//   };
-// };
+);
 
 type TPokemonDetail = z.infer<typeof PokemonDetailSchema>;
 
 const fetchPokemonDetail = async (id: number) => {
   const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
 
-  const data = (await response.json()) as TPokemonDetail;
+  await new Promise((resolve) => setTimeout(resolve, Math.random() * 1000));
+
+  const data = PokemonDetailSchema.parse(response.json());
 
   return data;
 };

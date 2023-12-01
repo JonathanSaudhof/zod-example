@@ -2,24 +2,29 @@ import { Suspense } from "react";
 import { z } from "zod";
 import PokemonDetail, { PokemonDetailSkeleton } from "./PokemonDetail";
 
-const PokemonResultItemSchema = z.object({ name: z.string(), url: z.string() });
+const PokemonResultItemSchema = z.object({
+  name: z.string().min(3),
+  url: z.string(),
+});
 
 const PokemonResultSchema = z.array(PokemonResultItemSchema);
 
-// export type TPokemonResult = {
-//   name: string;
-//   url: string;
-// };
+const PokemonResponseSchema = z.promise(
+  z.object({
+    count: z.number(),
+    next: z.string().nullable(),
+    previous: z.string().nullable(),
+    results: PokemonResultSchema,
+  }),
+);
+
+type TPokemonResponse = z.infer<typeof PokemonResponseSchema>;
 
 type TPokemonResult = z.infer<typeof PokemonResultItemSchema>;
 
 const PokemonResultListSchema = z.array(
   PokemonResultItemSchema.extend({ id: z.number() }),
 );
-
-// export type TPokemonListItem = {
-//   id: number;
-// } & TPokemonResult;
 
 type TPokemonList = z.infer<typeof PokemonResultListSchema>;
 
@@ -33,14 +38,16 @@ const getPokemonId = (url: string | string[]): number => {
 
 const fetchPokemonList = async (): Promise<TPokemonList> => {
   const response = await fetch("https://pokeapi.co/api/v2/pokemon");
-  const data = (await response.json()) as { results: TPokemonResult[] };
+  const data = await PokemonResponseSchema.parseAsync(response.json());
 
-  const pokemonList = data.results.map((pokemon, index) => {
-    return {
-      ...pokemon,
-      id: getPokemonId(pokemon.url),
-    };
-  });
+  const pokemonList = PokemonResultListSchema.parse(
+    data.results.map((pokemon, index) => {
+      return {
+        ...pokemon,
+        id: getPokemonId(pokemon.url),
+      };
+    }),
+  );
 
   return pokemonList;
 };
