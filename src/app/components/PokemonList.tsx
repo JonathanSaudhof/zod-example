@@ -18,7 +18,7 @@ const getPokemonId = (url: string | string[]): number => {
   return parsedId || getPokemonId(spittedUrl);
 };
 
-const fetchPokemon = async (): Promise<TPokemonListItem[]> => {
+const fetchPokemonList = async (): Promise<TPokemonListItem[]> => {
   const response = await fetch("https://pokeapi.co/api/v2/pokemon");
   const data = (await response.json()) as { results: TPokemonResult[] };
 
@@ -33,7 +33,7 @@ const fetchPokemon = async (): Promise<TPokemonListItem[]> => {
 };
 
 const PokemonList = async () => {
-  const pokemon = await fetchPokemon();
+  const pokemon = await fetchPokemonList();
 
   await new Promise((resolve) => setTimeout(resolve, 1000));
 
