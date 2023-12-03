@@ -1,37 +1,58 @@
+import { z } from "zod";
 import { TPokemonListItem } from "./PokemonList";
 
-import { z } from "zod";
+const PokemonDetailViewSchema = z.object({
+  name: z.string(),
+  weight: z.number(),
+  abilities: z.array(z.string()),
+  frontImage: z.string(),
+  backImage: z.string(),
+  height: z.number().positive(),
+});
 
 const PokemonDetailSchema = z.promise(
-  z.object({
-    name: z.string(),
-    url: z.string(),
-    weight: z.number().positive(),
-    abilities: z.array(
-      z.object({
-        ability: z.object({
-          name: z.string(),
-          url: z.string(),
+  z
+    .object({
+      name: z.string(),
+      // url: z.string(),
+      weight: z.number().positive(),
+      height: z.number().positive(),
+      abilities: z.array(
+        z.object({
+          ability: z.object({
+            name: z.string(),
+            url: z.string(),
+          }),
+          is_hidden: z.boolean(),
+          slot: z.number(),
         }),
-        is_hidden: z.boolean(),
-        slot: z.number(),
+      ),
+      sprites: z.object({
+        front_default: z.string(),
+        back_default: z.string(),
       }),
-    ),
-    sprites: z.object({
-      front_default: z.string(),
-      back_default: z.string(),
-    }),
-  }),
+    })
+    .transform((data) => {
+      return {
+        name: data.name,
+        weight: data.weight,
+        height: data.height,
+        abilities: data.abilities.map((ability) => ability.ability.name),
+        frontImage: data.sprites.front_default,
+        backImage: data.sprites.back_default,
+      };
+    })
+    .pipe(PokemonDetailViewSchema),
 );
 
-type TPokemonDetail = z.infer<typeof PokemonDetailSchema>;
+// type TPokemonDetail = z.infer<typeof PokemonDetailSchema>;
 
 const fetchPokemonDetail = async (id: number) => {
   const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
 
   await new Promise((resolve) => setTimeout(resolve, Math.random() * 1000));
 
-  const data = PokemonDetailSchema.parse(response.json());
+  const data = await PokemonDetailSchema.parseAsync(response.json());
 
   return data;
 };
@@ -46,16 +67,17 @@ const PokemonDetail = async ({ id }: TPokemonListItem) => {
         <img
           width={200}
           height={200}
-          src={pokemonDetail.sprites.front_default}
+          src={pokemonDetail.frontImage}
           alt={pokemonDetail.name}
         />
       </div>
       <div className="flex flex-col gap-4">
         <p>Weight: {pokemonDetail.weight}</p>
+        <p>Height: {pokemonDetail.height}</p>
         <h3>Abilities</h3>
         <ul className="ml-4 list-disc">
-          {pokemonDetail.abilities.map((ability) => (
-            <li key={ability.ability.name}>{ability.ability.name}</li>
+          {pokemonDetail.abilities.map((ability, index) => (
+            <li key={`${ability}-${index}`}>{ability}</li>
           ))}
         </ul>
       </div>
@@ -72,16 +94,16 @@ export const PokemonDetailSkeleton: React.FC<{ name?: string }> = ({
         {name ? (
           <h2 className="text-xl font-bold capitalize">{name}</h2>
         ) : (
-          <div className="h-4 w-48 rounded-full bg-gray-200 dark:bg-gray-700"></div>
+          <div className="h-4 w-24 rounded-full bg-gray-200 dark:bg-gray-700"></div>
         )}
         <div className="h-[200px] w-[200px] rounded-full bg-gray-200 dark:bg-gray-700"></div>
       </div>
       <div className="flex flex-col gap-4">
-        <div className="h-2.5 w-48 rounded-full bg-gray-200 dark:bg-gray-700"></div>
-        <div className="h-2.5 w-48 rounded-full bg-gray-200 dark:bg-gray-700"></div>
-        <div className="ml-4 h-2.5 w-48 rounded-full bg-gray-200 dark:bg-gray-700"></div>
-        <div className="ml-4 h-2.5 w-48 rounded-full bg-gray-200 dark:bg-gray-700"></div>
-        <div className="ml-4 h-2.5 w-48 rounded-full bg-gray-200 dark:bg-gray-700"></div>
+        <div className="h-2.5 w-24 rounded-full bg-gray-200 dark:bg-gray-700"></div>
+        <div className="h-2.5 w-24 rounded-full bg-gray-200 dark:bg-gray-700"></div>
+        <div className="ml-4 h-2.5 w-24 rounded-full bg-gray-200 dark:bg-gray-700"></div>
+        <div className="ml-4 h-2.5 w-24 rounded-full bg-gray-200 dark:bg-gray-700"></div>
+        <div className="ml-4 h-2.5 w-24 rounded-full bg-gray-200 dark:bg-gray-700"></div>
       </div>
     </div>
   );
