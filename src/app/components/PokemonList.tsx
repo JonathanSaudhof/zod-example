@@ -7,6 +7,12 @@ const PokemonResultItemSchema = z.object({
   url: z.string(),
 });
 
+const PokemonResultListItemSchema = PokemonResultItemSchema.extend({
+  id: z.number(),
+});
+
+export type TPokemonListItem = z.infer<typeof PokemonResultListItemSchema>;
+
 const PokemonResultSchema = z.array(PokemonResultItemSchema);
 
 const PokemonResponseSchema = z.promise(
