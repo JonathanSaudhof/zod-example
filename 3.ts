@@ -1,41 +1,51 @@
-// Pokemon List 
+// Pokemon List
 // https://pokeapi.co/api/v2/pokemon
 
 // Pokemon Details
 // https://pokeapi.co/api/v2/pokemon/1
 
+// https://zod.dev/
+
+import { z } from "zod";
+
 ///////////////////////////////////////////
-// Types
+// Schemas and Types
 ///////////////////////////////////////////
 
-type TPokemonListItem = {
-  name: string;
-  url: string;
-};
+const PokemonListItemSchema = z.object({
+  name: z.string(),
+  url: z.string(),
+});
 
-type TPokemonList = TPokemonListItem[];
+const PokemonListSchema = z.array(PokemonListItemSchema);
 
-// type for our details page
-type TPokemonDetails = {
-  name: string;
-  height: number;
-  weight: number;
-  types: {
-    slot: number;
-    type: {
-      name: string;
-      url: string;
-    };
-  }[];
-};
+type TPokemonList = z.infer<typeof PokemonListSchema>;
 
-// type for our pokemon entity in the database
-type TPokemon = {
-  name: string;
-  height: number;
-  weight: number;
-  types: string[];
-};
+const PokemonDetailsSchema = z.object({
+  name: z.string(),
+  height: z.number(),
+  weight: z.number(),
+  types: z.array(
+    z.object({
+      slot: z.number(),
+      type: z.object({
+        name: z.string(),
+        url: z.string(),
+      }),
+    })
+  ),
+});
+
+type TPokemonDetails = z.infer<typeof PokemonDetailsSchema>;
+
+const PokemonSchema = z.object({
+  name: z.string(),
+  height: z.number(),
+  weight: z.number(),
+  types: z.array(z.string()),
+});
+
+type TPokemon = z.infer<typeof PokemonSchema>;
 
 ///////////////////////////////////////////
 // Database
@@ -48,7 +58,7 @@ const pokemonDeck: TPokemon[] = [];
 ///////////////////////////////////////////
 
 const addPokemonToDeck = (pokemon: any) => {
-  pokemonDeck.push(pokemon);
+  pokemonDeck.push(PokemonSchema.parse(pokemon));
 };
 
 const getPokemonList = async () => {
@@ -71,7 +81,9 @@ const getPokemonDetails = async (url: string) => {
 // Frontend
 ///////////////////////////////////////////
 
-const mapPokemonDetailsToPokemon = (pokemonDetails: TPokemonDetails): TPokemon => {
+const mapPokemonDetailsToPokemon = (
+  pokemonDetails: TPokemonDetails
+): TPokemon => {
   return {
     name: pokemonDetails.name,
     height: pokemonDetails.height,
@@ -80,11 +92,13 @@ const mapPokemonDetailsToPokemon = (pokemonDetails: TPokemonDetails): TPokemon =
   };
 };
 
+///////////////////////////////////////////
+
 const frontend = async () => {
   const pokemonList = await getPokemonList();
 
   // we display the list of pokemon
-  console.log(pokemonList);
+  console.log(PokemonListSchema.parse(pokemonList));
 
   // we click on the first item of our list
   const selectedPokemonFromList = pokemonList[0]!;
@@ -93,10 +107,12 @@ const frontend = async () => {
 
   const pokemonDetails = await getPokemonDetails(selectedPokemonFromList.url);
 
-  // console.log(pokemonDetails);
+  console.log(PokemonDetailsSchema.parse(pokemonDetails));
 
   // we map the details of the pokemon
-  const mappedPokemonDetails = mapPokemonDetailsToPokemon(pokemonDetails);
+  const mappedPokemonDetails = PokemonSchema.parse(
+    mapPokemonDetailsToPokemon(pokemonDetails)
+  );
 
   // we display the details of the pokemon
   console.log(mappedPokemonDetails);

@@ -1,41 +1,59 @@
-// Pokemon List 
+// Pokemon List
 // https://pokeapi.co/api/v2/pokemon
 
 // Pokemon Details
 // https://pokeapi.co/api/v2/pokemon/1
 
+// https://zod.dev/
+
+import { z } from "zod";
+
 ///////////////////////////////////////////
-// Types
+// Schemas and Types
 ///////////////////////////////////////////
 
-type TPokemonListItem = {
-  name: string;
-  url: string;
-};
+const PokemonListItemSchema = z.object({
+  name: z.string(),
+  url: z.string(),
+});
 
-type TPokemonList = TPokemonListItem[];
+const PokemonListSchema = z.array(PokemonListItemSchema);
 
-// type for our details page
-type TPokemonDetails = {
-  name: string;
-  height: number;
-  weight: number;
-  types: {
-    slot: number;
-    type: {
-      name: string;
-      url: string;
-    };
-  }[];
-};
+type TPokemonList = z.infer<typeof PokemonListSchema>;
 
-// type for our pokemon entity in the database
-type TPokemon = {
-  name: string;
-  height: number;
-  weight: number;
-  types: string[];
-};
+const PokemonSchema = z.object({
+  name: z.string(),
+  height: z.number(),
+  weight: z.number(),
+  types: z.array(z.string()),
+});
+
+const PokemonDetailsSchema = z
+  .object({
+    name: z.string(),
+    height: z.number(),
+    weight: z.number(),
+    types: z.array(
+      z.object({
+        slot: z.number(),
+        type: z.object({
+          name: z.string(),
+          url: z.string(),
+        }),
+      })
+    ),
+  })
+  .transform((data) => ({
+    name: data.name,
+    height: data.height,
+    weight: data.weight,
+    types: data.types.map((type) => type.type.name),
+  }))
+  .pipe(PokemonSchema);
+
+type TPokemonDetails = z.infer<typeof PokemonDetailsSchema>;
+
+type TPokemon = z.infer<typeof PokemonSchema>;
 
 ///////////////////////////////////////////
 // Database
@@ -48,7 +66,7 @@ const pokemonDeck: TPokemon[] = [];
 ///////////////////////////////////////////
 
 const addPokemonToDeck = (pokemon: any) => {
-  pokemonDeck.push(pokemon);
+  pokemonDeck.push(PokemonSchema.parse(pokemon));
 };
 
 const getPokemonList = async () => {
@@ -71,20 +89,11 @@ const getPokemonDetails = async (url: string) => {
 // Frontend
 ///////////////////////////////////////////
 
-const mapPokemonDetailsToPokemon = (pokemonDetails: TPokemonDetails): TPokemon => {
-  return {
-    name: pokemonDetails.name,
-    height: pokemonDetails.height,
-    weight: pokemonDetails.weight,
-    types: pokemonDetails.types.map((type) => type.type.name),
-  };
-};
-
 const frontend = async () => {
   const pokemonList = await getPokemonList();
 
   // we display the list of pokemon
-  console.log(pokemonList);
+  console.log(PokemonListSchema.parse(pokemonList));
 
   // we click on the first item of our list
   const selectedPokemonFromList = pokemonList[0]!;
@@ -93,16 +102,17 @@ const frontend = async () => {
 
   const pokemonDetails = await getPokemonDetails(selectedPokemonFromList.url);
 
-  // console.log(pokemonDetails);
-
   // we map the details of the pokemon
-  const mappedPokemonDetails = mapPokemonDetailsToPokemon(pokemonDetails);
+  const mappedPokemonDetails = PokemonDetailsSchema.parse(pokemonDetails);
 
   // we display the details of the pokemon
   console.log(mappedPokemonDetails);
 
   // we add the pokemon to our deck
   addPokemonToDeck(mappedPokemonDetails);
+
+  // look into the database
+  console.log(pokemonDeck);
 };
 
 frontend();
