@@ -12,12 +12,12 @@ import { z } from "zod";
 // Schemas and Types
 ///////////////////////////////////////////
 
-const PokemonListItemSchema = z.object({
-  name: z.string(),
-  url: z.string(),
-});
-
-const PokemonListSchema = z.array(PokemonListItemSchema);
+const PokemonListSchema = z.array(
+  z.object({
+    name: z.string(),
+    url: z.string(),
+  })
+);
 
 type TPokemonList = z.infer<typeof PokemonListSchema>;
 
@@ -51,8 +51,6 @@ const PokemonDetailsSchema = z
   }))
   .pipe(PokemonSchema);
 
-type TPokemonDetails = z.infer<typeof PokemonDetailsSchema>;
-
 type TPokemon = z.infer<typeof PokemonSchema>;
 
 ///////////////////////////////////////////
@@ -78,7 +76,7 @@ const getPokemonList = async () => {
 
   const data = await response.json();
 
-  return data.results as TPokemonList;
+  return PokemonListSchema.parse(data.results);
 };
 
 const getPokemonDetails = async (url: string) => {
@@ -86,7 +84,7 @@ const getPokemonDetails = async (url: string) => {
 
   const data = await response.json();
 
-  return data as TPokemonDetails;
+  return PokemonDetailsSchema.parse(data);
 };
 
 ///////////////////////////////////////////
@@ -104,14 +102,11 @@ const frontend = async () => {
 
   const pokemonDetails = await getPokemonDetails(selectedPokemonFromList.url);
 
-  // we map the details of the pokemon
-  const mappedPokemonDetails = PokemonDetailsSchema.parse(pokemonDetails);
-
   // we display the details of the pokemon
-  console.log(mappedPokemonDetails);
+  console.log(pokemonDetails);
 
   // we add the pokemon to our deck
-  addPokemonToDeck(mappedPokemonDetails);
+  addPokemonToDeck(pokemonDetails);
 
   // look into the database
   console.log(pokemonDeck);

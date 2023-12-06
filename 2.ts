@@ -4,36 +4,22 @@
 // Pokemon Details
 // https://pokeapi.co/api/v2/pokemon/1
 
+// https://zod.dev/
+
 import { z } from "zod";
 
 ///////////////////////////////////////////
 // Schemas and Types
 ///////////////////////////////////////////
 
-// type TPokemonList = {
-//   name: string;
-//   url: string;
-// };
-
-const PokemonListSchema = z.object({
-  name: z.string(),
-  url: z.string(),
-});
+const PokemonListSchema = z.array(
+  z.object({
+    name: z.string(),
+    url: z.string(),
+  })
+);
 
 type TPokemonList = z.infer<typeof PokemonListSchema>;
-
-// type TPokemonDetails = {
-//   name: string;
-//   height: number;
-//   weight: number;
-//   types: {
-//     slot: number;
-//     type: {
-//       name: string;
-//       url: string;
-//     };
-//   }[];
-// };
 
 const PokemonDetailsSchema = z.object({
   name: z.string(),
@@ -51,13 +37,6 @@ const PokemonDetailsSchema = z.object({
 });
 
 type TPokemonDetails = z.infer<typeof PokemonDetailsSchema>;
-
-// type TPokemon = {
-//   name: string;
-//   height: number;
-//   weight: number;
-//   types: string[];
-// };
 
 const PokemonSchema = z.object({
   name: z.string(),
@@ -78,8 +57,8 @@ const pokemonDeck: TPokemon[] = [];
 // Backend
 ///////////////////////////////////////////
 
-const addPokemonToDeck = (pokemon: any) => {
-  pokemonDeck.push(pokemon);
+const addPokemonToDeck = (pokemon: unknown) => {
+  pokemonDeck.push(PokemonSchema.parse(pokemon));
 };
 
 ///////////////////////////////////////////
@@ -91,7 +70,7 @@ const getPokemonList = async () => {
 
   const data = await response.json();
 
-  return data.results as TPokemonList[];
+  return PokemonListSchema.parse(data.results);
 };
 
 const getPokemonDetails = async (url: string) => {
@@ -99,18 +78,16 @@ const getPokemonDetails = async (url: string) => {
 
   const data = await response.json();
 
-  return data as TPokemonDetails;
+  return PokemonDetailsSchema.parse(data);
 };
 
-const mapPokemonDetailsToPokemon = (
-  pokemonDetails: TPokemonDetails
-): TPokemon => {
-  return {
+const mapPokemonDetailsToPokemon = (pokemonDetails: TPokemonDetails) => {
+  return PokemonSchema.parse({
     name: pokemonDetails.name,
     height: pokemonDetails.height,
     weight: pokemonDetails.weight,
     types: pokemonDetails.types.map((type) => type.type.name),
-  };
+  });
 };
 
 ///////////////////////////////////////////

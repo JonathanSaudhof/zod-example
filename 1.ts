@@ -1,4 +1,4 @@
-// Pokemon List 
+// Pokemon List
 // https://pokeapi.co/api/v2/pokemon
 
 // Pokemon Details
@@ -16,6 +16,7 @@ type TPokemonListItem = {
 type TPokemonList = TPokemonListItem[];
 
 // type for our details page
+// external api
 type TPokemonDetails = {
   name: string;
   height: number;
@@ -30,6 +31,7 @@ type TPokemonDetails = {
 };
 
 // type for our pokemon entity in the database
+// internal api
 type TPokemon = {
   name: string;
   height: number;
@@ -71,7 +73,9 @@ const getPokemonDetails = async (url: string) => {
   return data as TPokemonDetails;
 };
 
-const mapPokemonDetailsToPokemon = (pokemonDetails: TPokemonDetails): TPokemon => {
+const mapPokemonDetailsToPokemon = (
+  pokemonDetails: TPokemonDetails
+): TPokemon => {
   return {
     name: pokemonDetails.name,
     height: pokemonDetails.height,

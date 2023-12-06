@@ -25,8 +25,9 @@ type TPokemonList = z.infer<typeof PokemonListSchema>;
 
 const PokemonDetailsSchema = z.object({
   name: z.string(),
-  height: z.number(),
+  height: z.coerce.number(), // coerce = try to convert to number
   weight: z.number(),
+  email: z.string().email().nullish(),
   types: z.array(
     z.object({
       slot: z.number(),
