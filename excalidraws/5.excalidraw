@@ -5,8 +5,8 @@
   "elements": [
     {
       "type": "text",
-      "version": 2784,
-      "versionNonce": 1157592439,
+      "version": 2785,
+      "versionNonce": 171792241,
       "isDeleted": false,
       "id": "Piu3TwIJQqEeow2-PKqJj",
       "fillStyle": "solid",
@@ -26,7 +26,7 @@
       "frameId": null,
       "roundness": null,
       "boundElements": [],
-      "updated": 1701796997771,
+      "updated": 1701849838031,
       "link": null,
       "locked": false,
       "fontSize": 36,
@@ -41,8 +41,8 @@
     },
     {
       "type": "text",
-      "version": 3106,
-      "versionNonce": 873631031,
+      "version": 3107,
+      "versionNonce": 1148900383,
       "isDeleted": false,
       "id": "IQdl-ZFGdzshzW8F8PUjW",
       "fillStyle": "solid",
@@ -62,7 +62,7 @@
       "frameId": null,
       "roundness": null,
       "boundElements": [],
-      "updated": 1701796948003,
+      "updated": 1701849838031,
       "link": null,
       "locked": false,
       "fontSize": 28,
@@ -109,12 +109,12 @@
       "containerId": null,
       "originalText": "\n// basic\n\nconst schema = z.coerce.string();\nschema.parse(1); // \"1\"\n\n |\n V\n\n// & more advanced recursive stuff\n\nconst dogSchema = z.object({\n  name: z.string(),\n  age: z.number(),\n});\n\ntype Dog = z.infer<typeof dogSchema> & {\n  sibblings: Dog[];\n};\n\nconst dogWithSibblingsSchema: z.ZodType<Dog> = \n    dogSchema.extend({\n      subcategories: z.lazy(() => categorySchema.array()),\n    });\n\n\nOmit, Merge, Union ... name it!\n",
       "lineHeight": 1.2,
-      "baseline": 667
+      "baseline": 666
     },
     {
       "type": "text",
-      "version": 377,
-      "versionNonce": 1090514169,
+      "version": 378,
+      "versionNonce": 1952661841,
       "isDeleted": false,
       "id": "Bwx9cVb3vTK2FPjW7vczC",
       "fillStyle": "solid",
@@ -134,7 +134,7 @@
       "frameId": null,
       "roundness": null,
       "boundElements": [],
-      "updated": 1701797687460,
+      "updated": 1701849838032,
       "link": null,
       "locked": false,
       "fontSize": 36,
@@ -145,12 +145,12 @@
       "containerId": null,
       "originalText": "https://zod.dev/",
       "lineHeight": 1.2,
-      "baseline": 35
+      "baseline": 34
     },
     {
       "type": "text",
-      "version": 3564,
-      "versionNonce": 1922825337,
+      "version": 3565,
+      "versionNonce": 1734932543,
       "isDeleted": false,
       "id": "IUsx2ANmFh4oS7kRSPW_V",
       "fillStyle": "solid",
@@ -170,7 +170,7 @@
       "frameId": null,
       "roundness": null,
       "boundElements": [],
-      "updated": 1701797650595,
+      "updated": 1701849838033,
       "link": null,
       "locked": false,
       "fontSize": 28,
@@ -205,7 +205,7 @@
       "groupIds": [],
       "frameId": null,
       "roundness": null,
-      "boundElements": null,
+      "boundElements": [],
       "updated": 1701797674226,
       "link": null,
       "locked": false,
@@ -217,7 +217,7 @@
       "containerId": null,
       "originalText": "\nconst schema = z.object({\n    name: z.string(),\n    count: z.number() \n});\n\n\n\n\n\n",
       "lineHeight": 1.2,
-      "baseline": 259
+      "baseline": 258
     },
     {
       "type": "text",
@@ -253,7 +253,7 @@
       "containerId": null,
       "originalText": "const parsedData = schema.parse({\n    moep: \"test\"\n})",
       "lineHeight": 1.2,
-      "baseline": 67
+      "baseline": 66
     },
     {
       "type": "text",
@@ -289,7 +289,7 @@
       "containerId": null,
       "originalText": "const parsedData = schema.parse({\n    name: \"lorem\",\n    count: \"1\",\n})",
       "lineHeight": 1.2,
-      "baseline": 91
+      "baseline": 90
     },
     {
       "type": "text",
@@ -325,12 +325,12 @@
       "containerId": null,
       "originalText": "const parsedData = schema.parse({\n    name: \"lorem\",\n    count: 1,\n    x: \"y\"\n})\n\n// { name: \"lorem\", count: 1 }",
       "lineHeight": 1.2,
-      "baseline": 163
+      "baseline": 162
     },
     {
       "type": "text",
-      "version": 796,
-      "versionNonce": 1691195351,
+      "version": 797,
+      "versionNonce": 1508962097,
       "isDeleted": false,
       "id": "blu-hyJBWcdiRvNDlrDoJ",
       "fillStyle": "solid",
@@ -350,7 +350,7 @@
       "frameId": null,
       "roundness": null,
       "boundElements": [],
-      "updated": 1701797759877,
+      "updated": 1701849838033,
       "link": null,
       "locked": false,
       "fontSize": 20,
@@ -361,12 +361,12 @@
       "containerId": null,
       "originalText": "-> default mode vs. strict vs. passthrough",
       "lineHeight": 1.25,
-      "baseline": 17
+      "baseline": 18
     },
     {
       "type": "text",
-      "version": 3843,
-      "versionNonce": 732410167,
+      "version": 3844,
+      "versionNonce": 759011423,
       "isDeleted": false,
       "id": "d50_43FVqJdlUmw_GP6zf",
       "fillStyle": "solid",
@@ -386,7 +386,7 @@
       "frameId": null,
       "roundness": null,
       "boundElements": [],
-      "updated": 1701797562143,
+      "updated": 1701849838033,
       "link": null,
       "locked": false,
       "fontSize": 28,
@@ -433,7 +433,7 @@
       "containerId": null,
       "originalText": "\nconst schema = z.object({\n    name: z.string(),\n    nestedObject: z.object({\n        x: \"abc\",\n        y: z.object({\n                z: \"def\"\n            })\n    }) \n})\n.transform(data=>({\n    \n     })\n )\n.pipe(SchemaIWantToAssertOn);\n",
       "lineHeight": 1.2,
-      "baseline": 379
+      "baseline": 378
     }
   ],
   "appState": {

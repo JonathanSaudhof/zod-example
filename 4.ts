@@ -69,6 +69,10 @@ const addPokemonToDeck = (pokemon: any) => {
   pokemonDeck.push(PokemonSchema.parse(pokemon));
 };
 
+///////////////////////////////////////////
+// Frontend
+///////////////////////////////////////////
+
 const getPokemonList = async () => {
   const response = await fetch("https://pokeapi.co/api/v2/pokemon");
 
@@ -85,8 +89,6 @@ const getPokemonDetails = async (url: string) => {
   return data as TPokemonDetails;
 };
 
-///////////////////////////////////////////
-// Frontend
 ///////////////////////////////////////////
 
 const frontend = async () => {

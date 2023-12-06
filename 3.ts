@@ -12,6 +12,8 @@ import { z } from "zod";
 // Schemas and Types
 ///////////////////////////////////////////
 
+// mehr Validierung einfügen
+
 const PokemonListItemSchema = z.object({
   name: z.string(),
   url: z.string(),
@@ -61,35 +63,35 @@ const addPokemonToDeck = (pokemon: any) => {
   pokemonDeck.push(PokemonSchema.parse(pokemon));
 };
 
+///////////////////////////////////////////
+// Frontend
+///////////////////////////////////////////
+
 const getPokemonList = async () => {
   const response = await fetch("https://pokeapi.co/api/v2/pokemon");
 
   const data = await response.json();
 
-  return data.results as TPokemonList;
+  return PokemonListSchema.parse(data.results);
 };
 
 const getPokemonDetails = async (url: string) => {
   const response = await fetch(url);
 
+  // any / unknown
   const data = await response.json();
 
-  return data as TPokemonDetails;
+  // type assertion
+  return PokemonDetailsSchema.parse(data);
 };
 
-///////////////////////////////////////////
-// Frontend
-///////////////////////////////////////////
-
-const mapPokemonDetailsToPokemon = (
-  pokemonDetails: TPokemonDetails
-): TPokemon => {
-  return {
+const mapPokemonDetailsToPokemon = (pokemonDetails: TPokemonDetails) => {
+  return PokemonSchema.parse({
     name: pokemonDetails.name,
     height: pokemonDetails.height,
     weight: pokemonDetails.weight,
     types: pokemonDetails.types.map((type) => type.type.name),
-  };
+  });
 };
 
 ///////////////////////////////////////////
@@ -98,7 +100,7 @@ const frontend = async () => {
   const pokemonList = await getPokemonList();
 
   // we display the list of pokemon
-  console.log(PokemonListSchema.parse(pokemonList));
+  console.log(pokemonList);
 
   // we click on the first item of our list
   const selectedPokemonFromList = pokemonList[0]!;
@@ -107,12 +109,10 @@ const frontend = async () => {
 
   const pokemonDetails = await getPokemonDetails(selectedPokemonFromList.url);
 
-  console.log(PokemonDetailsSchema.parse(pokemonDetails));
+  console.log(pokemonDetails);
 
   // we map the details of the pokemon
-  const mappedPokemonDetails = PokemonSchema.parse(
-    mapPokemonDetailsToPokemon(pokemonDetails)
-  );
+  const mappedPokemonDetails = mapPokemonDetailsToPokemon(pokemonDetails);
 
   // we display the details of the pokemon
   console.log(mappedPokemonDetails);

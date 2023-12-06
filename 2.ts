@@ -82,6 +82,10 @@ const addPokemonToDeck = (pokemon: any) => {
   pokemonDeck.push(pokemon);
 };
 
+///////////////////////////////////////////
+// Frontend
+///////////////////////////////////////////
+
 const getPokemonList = async () => {
   const response = await fetch("https://pokeapi.co/api/v2/pokemon");
 
@@ -97,10 +101,6 @@ const getPokemonDetails = async (url: string) => {
 
   return data as TPokemonDetails;
 };
-
-///////////////////////////////////////////
-// Frontend
-///////////////////////////////////////////
 
 const mapPokemonDetailsToPokemon = (
   pokemonDetails: TPokemonDetails
@@ -125,7 +125,6 @@ const frontend = async () => {
   const selectedPokemonFromList = pokemonList[0]!;
 
   // we get the details of the pokemon
-
   const pokemonDetails = await getPokemonDetails(selectedPokemonFromList.url);
 
   // console.log(pokemonDetails);
